@@ -6,6 +6,11 @@ import torch.nn.functional as F
 class Encoder(nn.Module):
     def __init__(self, embedding_dim, hidden_dim, n_layers, dropout, bidirect) -> None:
         super().__init__()
+        '''
+            embedding_dim: embedding的维度
+            hidden_dim: lstm的隐层单元数量
+            n_layers: lstm的层数
+        '''
 
         self.hidden_dim = hidden_dim // 2 if bidirect else hidden_dim
         self.n_layers = n_layers * 2 if bidirect else n_layers
@@ -21,6 +26,10 @@ class Encoder(nn.Module):
         self.c0 = nn.Parameter(torch.zeros(1), requires_grad=False)
 
     def forward(self, embedded_inputs, hidden):
+        '''
+            embedded_inputs: pointer-net的embeded inputs
+            hidden: LSTM的隐层输出
+        '''
         embedded_inputs = embedded_inputs.permute(1, 0, 2)
         outputs, hidden = self.lstm(embedded_inputs, hidden)
 
