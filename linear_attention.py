@@ -1,9 +1,12 @@
+from collections import namedtuple
 import torch
 import torch.nn as nn
 
 
-from 
+from linformer import LinformerSelfAttention
 
+
+linformerSetting = namedtuple('LinformerSettings', ['k'])
 
 
 def exists(val):
@@ -37,4 +40,4 @@ class LinearAttentionTransformer(nn.Module):
     ) -> None:
         super().__init__()
         assert not (causal and exists(linformer_settings)), 'Linfformer self attention layer can only be used for non-causal networks'
-        assert not exists(linformer_settings) or isinstance(linformer_settings, )
+        assert not exists(linformer_settings) or isinstance(linformer_settings, linformerSetting), 'Linformer self-attention settings must a LinformerSetting namedtuple'
