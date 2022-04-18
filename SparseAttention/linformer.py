@@ -102,7 +102,7 @@ class MultiHeadLinearAttention(nn.Module):
 
 
 def test_func():
-    # @ 本质就是矩阵相乘
+    # @ 本质就是矩阵相乘，pytorch中存在的，python中不可见
     x = torch.tensor([[[1, 2, 3], [4, 5, 6], [6, 7, 8]]])
     y = torch.tensor([[[1, 2, 3], [4, 5, 6], [6, 7, 8]]])
     print("x_shape", x.shape)
