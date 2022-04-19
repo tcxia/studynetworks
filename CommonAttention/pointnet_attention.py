@@ -12,8 +12,8 @@ class Encoder(nn.Module):
             n_layers: lstm的层数
         '''
 
-        self.hidden_dim = hidden_dim // 2 if bidirect else hidden_dim
-        self.n_layers = n_layers * 2 if bidirect else n_layers
+        self.hidden_dim = hidden_dim // 2 if bidirect else hidden_dim # 单向或者双向隐层表示
+        self.n_layers = n_layers * 2 if bidirect else n_layers 
         self.bidirect = bidirect
         self.lstm = nn.LSTM(
             embedding_dim,
