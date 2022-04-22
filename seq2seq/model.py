@@ -18,8 +18,10 @@ class Encoder(nn.Module):
 
     def forward(self, src, hidden=None):
         embedded = self.embed(src)
+        # packed = torch.nn.utils.rnn.pack_padded_sequence(embeded, input_lengths)
         outputs, hidden = self.gru(embedded, hidden)
-        outputs = (outputs[:, :, :self.hidden_size] + outputs[:, :, self.hidden_size:])
+        # outputs, output_lengths = torch.nn.utils.rnn.pad_packed_sequence(outputs) # unpack (back to padded)
+        outputs = (outputs[:, :, :self.hidden_size] + outputs[:, :, self.hidden_size:]) # 将双向的输出求和
         return outputs, hidden
 
     
@@ -55,8 +57,8 @@ class Decoder(nn.Module):
         self.output_size = output_size
         self.n_layer = n_layer
 
-        self.embed = nn.Embedding(output_size, embed_size)
-        self.dropout = nn.Dropout(dropout, inplace=True)
+        self.embed = nn.Embedding(output_size, embed_size) # 输出编码
+        self.dropout = nn.Dropout(dropout, inplace=True) 
         self.attn = Attention(hidden_size)
         self.gru = nn.GRU(hidden_size + embed_size, hidden_size, n_layer, dropout=dropout)
 
