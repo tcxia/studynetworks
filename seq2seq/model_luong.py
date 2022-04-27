@@ -5,8 +5,6 @@ import torch.nn.functional as F
 import math
 import random
 
-
-
 class Encoder(nn.Module):
     def __init__(self, input_size, hidden_size) -> None:
         super().__init__()
@@ -15,6 +13,7 @@ class Encoder(nn.Module):
         self.gru = nn.GRU(input_size, hidden_size, batch_first=True)
     
     def forward(self, src):
+        # src: [bs, seq_len, dim]
         output, hidden = self.gru(src)
         return output, hidden
 

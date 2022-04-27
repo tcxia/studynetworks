@@ -17,6 +17,7 @@ class Encoder(nn.Module):
         self.gru = nn.GRU(embed_size, hidden_size, n_layer, dropout=dropout, bidirectional=True)
 
     def forward(self, src, hidden=None):
+        # src : [bs, seq_len]
         embedded = self.embed(src)
         # packed = torch.nn.utils.rnn.pack_padded_sequence(embeded, input_lengths)
         outputs, hidden = self.gru(embedded, hidden)
