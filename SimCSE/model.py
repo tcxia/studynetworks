@@ -77,3 +77,46 @@ def cl_init(cls, config):
 
     cls.sim = Similarity(temp=cls.model_args.temp)
     cls.init_weights()
+
+
+def cl_forward(cls,
+               encoder,
+               input_ids=None,
+               attention_mask=None,
+               token_type_ids=None,
+               position_ids=None,
+               head_mask=None,
+               inputs_embeds=None,
+               labels=None,
+               output_attentions=None,
+               output_hidden_states=None,
+               return_dict=None,
+               mlm_input_ids=None,
+               mlm_labels=None):
+    return_dict = return_dict if return_dict is not None else cls.config.use_return_dict
+    ori_input_ids = input_ids
+    batch_size = input_ids.size(0)
+
+    num_sent = input_ids.size(1)
+
+    mlm_outputs = None
+
+    input_ids = input_ids.view((-1, input_ids.size(-1)))
+    attention_mask = attention_mask.view((-1, attention_mask.size(-1)))
+    if token_type_ids is not None:
+        token_type_ids = token_type_ids.view((-1, token_type_ids.size(-1)))
+    
+    outputs = encoder(
+        input_ids,
+        attention_mask=attention_mask,
+        token_type_ids=token_type_ids,
+        position_ids=position_ids,
+        head_mask=head_mask,
+        inputs_embeds=inputs_embeds,
+        output_attentions=output_attentions,
+        output_hidden_states= True if cls.model_args.pooler_type in ['avg_top2', 'avg_first_last'] else False,
+        return_dict=True
+    )
+    
+    if mlm_input_ids is not None:
+        mlm_input_ids
