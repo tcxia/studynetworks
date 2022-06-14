@@ -6,7 +6,7 @@ import torch.nn.functional as F
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv
+from torch_geometric.nn import GCNConv, GATConv
 
 # from torch_geometric.logging import init_wandb, log
 
@@ -26,6 +26,8 @@ data = dataset[0]
 
 # data.x, data.edge_index, data.edge_attr
 
+# gdc是一种数据预处理方法，可以减少图中噪音的影响，可以在有监督和无监督任务的各种模型以及各种数据集上显著提高性能
+# 并且gdc不仅限于gnn，还可以与任何基于图的模型或算法轻松组合
 if args.use_gdc:
     transform = T.GDC(
         self_loop_weight=1,
@@ -56,6 +58,20 @@ class GCN(torch.nn.Module):
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
         return F.log_softmax(x, dim=1)
+
+class GAT(torch.nn.Module):
+    def __init__(self, in_channels, out_channels) -> None:
+        super().__init__()
+        self.conv1 = GATConv(in_channels, 8, heads=8, dropout=0.6)
+        self.conv2 = GATConv(8 * 8, out_channels, heads=1, concat=False, dropout=0.6)
+
+    def forward(self, x, edge_index):
+        x = F.dropout(x, p=0.6, training=self.training)
+        x = F.elu(self.conv1(x, edge_index))
+        x = F.dropout(x, p=0.6, training=self.training)
+        x = self.conv2(x, edge_index)
+        return F.log_softmax(x, dim=-1)
+
 
 
 model = GCN()
